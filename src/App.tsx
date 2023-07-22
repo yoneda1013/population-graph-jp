@@ -2,16 +2,16 @@ import React, { useEffect, useState } from 'react';
 import './App.css';
 import PrefectureSelector from './PrefectureSelector';
 import PopulationChart from './PopulationChart';
-import axios from 'axios';
+import axios,{ AxiosResponse } from 'axios';
 import { log } from 'console';
 
-function App() {
-  //非同期通信でhttps://opendata.resas-portal.go.jp/api/v1/prefecturesから都道府県一覧を取得してくる。
-  type Prefecture = {
-    prefCode: number;
-    prefName: string;
-  };
 
+export type Prefecture = {
+  prefCode: number;
+  prefName: string;
+};
+
+function App() {
   type ApiData = {
     message: string | null;
     result: Prefecture[];
@@ -19,6 +19,39 @@ function App() {
 
   const [data, setData] = useState<ApiData>({ message: null, result: [] });
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedPrefCodes, setSelectedPrefCodes] = useState<number[]>([]);
+  //都道府県別人口データの状態を管理するstateを作成する。
+  const [selectedPrefPopulation, setSelectedPrefPopulation] = useState<number[]>([]);
+
+  console.log(selectedPrefPopulation, "selectedPrefPopulation");
+
+  const handlePrefCheck = (checked: boolean, prefCode: number) => {
+    setSelectedPrefCodes(prev => {
+      if (checked) {
+        return [...prev, prefCode];
+      } else {
+        return prev.filter(code => code !== prefCode);
+      }
+    });
+
+    const getData = async (): Promise<void> => {
+        try {
+          const res: AxiosResponse = await axios.get('https://opendata.resas-portal.go.jp/api/v1/population/composition/perYear', {
+            headers: { 'X-API-KEY': process.env.REACT_APP_RESAS_API_KEY },
+            params: {
+              prefCode: prefCode,
+              cityCode: '-',
+            },
+          });
+          setSelectedPrefPopulation(prev => [...prev, res.data]);
+        } catch (err) {
+          console.error(`Error for prefCode ${prefCode}: `, err);
+        }
+    };
+    
+    getData();
+    //取得したデータをPopulationChartコンポーネントに渡す。
+  };
 
   useEffect(() => {
     axios
@@ -45,7 +78,7 @@ function App() {
         {isLoading ? (
           <div>Loading...</div> // データ取得中はローディングメッセージを表示
         ) : (
-          <PrefectureSelector data={data} /> // データ取得後、PrefectureSelectorコンポーネントを表示
+          <PrefectureSelector data={data} onPrefCheck={handlePrefCheck}/> // データ取得後、PrefectureSelectorコンポーネントを表示
         )}
         <PopulationChart />
       </main>
