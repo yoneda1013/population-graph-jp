@@ -9,7 +9,7 @@ export type Prefecture = {
   prefName: string;
 };
 
-type PopulationData = {
+export type PopulationData = {
   message: null | string,
   boundaryYear: number,
   data: {
@@ -94,7 +94,7 @@ function App() {
         ) : (
           <PrefectureSelector data={data} onPrefCheck={handlePrefCheck}/> // データ取得後、PrefectureSelectorコンポーネントを表示
         )}
-        <PopulationChart />
+        <PopulationChart selectedPrefPopulation={selectedPrefPopulation}/>
       </main>
     </div>
   );
