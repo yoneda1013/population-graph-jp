@@ -10,8 +10,6 @@ type PrefectureSelectorProps = {
 };
 
 export default function PrefectureSelector({ data, onPrefCheck }: PrefectureSelectorProps) {
-  console.log(typeof data, data, 'data at 子コンポーネント');
-
   return (
     <div>
       <h2>都道府県</h2>

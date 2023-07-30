@@ -3,12 +3,23 @@ import './App.css';
 import PrefectureSelector from './PrefectureSelector';
 import PopulationChart from './PopulationChart';
 import axios,{ AxiosResponse } from 'axios';
-import { log } from 'console';
-
 
 export type Prefecture = {
   prefCode: number;
   prefName: string;
+};
+
+type PopulationData = {
+  message: null | string,
+  boundaryYear: number,
+  data: {
+    label: string,
+    data: {
+      year: number,
+      value: number,
+    }[],
+  }[],
+  prefCode: number;
 };
 
 function App() {
@@ -21,20 +32,12 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedPrefCodes, setSelectedPrefCodes] = useState<number[]>([]);
   //都道府県別人口データの状態を管理するstateを作成する。
-  const [selectedPrefPopulation, setSelectedPrefPopulation] = useState<number[]>([]);
-
-  console.log(selectedPrefPopulation, "selectedPrefPopulation");
+  const [selectedPrefPopulation, setSelectedPrefPopulation] = useState<PopulationData[]>([]);
 
   const handlePrefCheck = (checked: boolean, prefCode: number) => {
-    setSelectedPrefCodes(prev => {
-      if (checked) {
-        return [...prev, prefCode];
-      } else {
-        return prev.filter(code => code !== prefCode);
-      }
-    });
 
-    const getData = async (): Promise<void> => {
+    const getData = async (prefCode: number): Promise<void> => {
+      
         try {
           const res: AxiosResponse = await axios.get('https://opendata.resas-portal.go.jp/api/v1/population/composition/perYear', {
             headers: { 'X-API-KEY': process.env.REACT_APP_RESAS_API_KEY },
@@ -43,16 +46,28 @@ function App() {
               cityCode: '-',
             },
           });
+          //res.dataに{prefCode: number}のプロパティを追加する
+          res.data.prefCode = prefCode;
           setSelectedPrefPopulation(prev => [...prev, res.data]);
         } catch (err) {
           console.error(`Error for prefCode ${prefCode}: `, err);
         }
     };
-    
-    getData();
-    //取得したデータをPopulationChartコンポーネントに渡す。
-  };
 
+    const deleteData = async (prefCode: number): Promise<void> => {
+      //selectedPrefPopulationというオブジェクトで構成された配列をループさせ、prefCodeが一致するデータを削除する。
+      setSelectedPrefPopulation(prev => prev.filter(data => data.prefCode !== prefCode));
+    };
+
+    if (checked) {
+      setSelectedPrefCodes(prev => [...prev, prefCode]);
+      getData(prefCode);
+    } else {
+      setSelectedPrefCodes(prev => prev.filter(code => code !== prefCode));
+      deleteData(prefCode);
+    }
+  };
+  console.log(selectedPrefPopulation, "selectedPrefPopulation");
   useEffect(() => {
     axios
       .get('https://opendata.resas-portal.go.jp/api/v1/prefectures', {
@@ -67,7 +82,6 @@ function App() {
         setIsLoading(false); // エラーが発生した場合でもローディング状態をfalseに設定
       });
   }, []);
-  console.log(data);
 
   return (
     <div>
