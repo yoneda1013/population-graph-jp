@@ -6,7 +6,7 @@ type PrefectureSelectorProps = {
     message: null | string,
     result: Prefecture[],
   } | null,
-  onPrefCheck: (checked: boolean, prefCode: number) => void,
+  onPrefCheck: (checked: boolean, prefCode: number, prefName: string) => void,
 };
 
 export default function PrefectureSelector({ data, onPrefCheck }: PrefectureSelectorProps) {
@@ -17,7 +17,7 @@ export default function PrefectureSelector({ data, onPrefCheck }: PrefectureSele
       {data?.result &&
         data.result.map((prefecture: Prefecture) => (
           <div key={prefecture.prefCode}>
-            <input type="checkbox" onChange={e => onPrefCheck(e.target.checked, prefecture.prefCode)} />
+            <input type="checkbox" onChange={e => onPrefCheck(e.target.checked, prefecture.prefCode, prefecture.prefName)} />
             <label htmlFor={String(prefecture.prefCode)}>
               {prefecture.prefName}
             </label>

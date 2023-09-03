@@ -11,15 +11,19 @@ export type Prefecture = {
 
 export type PopulationData = {
   message: null | string,
-  boundaryYear: number,
-  data: {
-    label: string,
+  result: {
+    boundaryYear: number,
     data: {
-      year: number,
-      value: number,
+      label: string,
+      data: {
+        year: number,
+        value: number,
+        rate?: number,
+      }[],
     }[],
-  }[],
-  prefCode: number;
+  },
+  prefCode: number,
+  prefName: string,
 };
 
 function App() {
@@ -34,7 +38,7 @@ function App() {
   //都道府県別人口データの状態を管理するstateを作成する。
   const [selectedPrefPopulation, setSelectedPrefPopulation] = useState<PopulationData[]>([]);
 
-  const handlePrefCheck = (checked: boolean, prefCode: number) => {
+  const handlePrefCheck = (checked: boolean, prefCode: number, prefName:string) => {
 
     const getData = async (prefCode: number): Promise<void> => {
       
@@ -48,6 +52,7 @@ function App() {
           });
           //res.dataに{prefCode: number}のプロパティを追加する
           res.data.prefCode = prefCode;
+          res.data.prefName = prefName;
           setSelectedPrefPopulation(prev => [...prev, res.data]);
         } catch (err) {
           console.error(`Error for prefCode ${prefCode}: `, err);
