@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import './App.css';
 import PrefectureSelector from './PrefectureSelector';
 import PopulationChart from './PopulationChart';
@@ -80,11 +80,11 @@ function App() {
       })
       .then((res) => {
         setData(res.data);
-        setIsLoading(false); // データ取得後、ローディング状態をfalseに設定
+        setIsLoading(false);
       })
       .catch((err) => {
         console.error('Error:', err);
-        setIsLoading(false); // エラーが発生した場合でもローディング状態をfalseに設定
+        setIsLoading(false);
       });
   }, []);
 
@@ -95,9 +95,9 @@ function App() {
       </header>
       <main>
         {isLoading ? (
-          <div>Loading...</div> // データ取得中はローディングメッセージを表示
+          <div>Loading...</div>
         ) : (
-          <PrefectureSelector data={data} onPrefCheck={handlePrefCheck}/> // データ取得後、PrefectureSelectorコンポーネントを表示
+          <PrefectureSelector data={data} onPrefCheck={handlePrefCheck}/>
         )}
         <PopulationChart selectedPrefPopulation={selectedPrefPopulation}/>
       </main>

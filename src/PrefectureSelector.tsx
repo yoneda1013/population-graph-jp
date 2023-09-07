@@ -1,4 +1,3 @@
-import React from 'react';
 import { Prefecture } from './App';
 
 type PrefectureSelectorProps = {
