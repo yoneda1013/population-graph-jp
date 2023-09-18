@@ -38,6 +38,8 @@ export type PopulationChartProps = {
 function App() {
   const {data, isLoading} = useDataFetch();
   const {selectedPrefPopulation ,handlePrefCheck} = usePrefPopulationFetch();
+  //JSXが扱われているファイルの場合はtsxにする。扱われていないファイル、例えばカスタムフックなどだとtsになる。テストファイルにおいてもJSXを扱う場合は、tsxにする。
+  //tsファイルでjsx書くとコンパイルで落ちる
 
   return (
     <div>

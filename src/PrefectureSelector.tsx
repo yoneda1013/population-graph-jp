@@ -7,7 +7,7 @@ type PrefectureSelectorProps = {
   } | null,
   onPrefCheck: (checked: boolean, prefCode: number, prefName: string) => void,
 };
-
+//県が描画されるかはprefSelectorのテスト内で行う
 export default function PrefectureSelector({ data, onPrefCheck }: PrefectureSelectorProps) {
   return (
     <div>
