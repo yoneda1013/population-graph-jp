@@ -28,7 +28,6 @@ export const useDataFetch = () => {
   return { data, isLoading };
 };
 
-//handlePrefCheckのテスト 初期状態selectedPrefPopulation空→県が選択された状態→１.次の件が選択された　or ２。選択されてた件が削除される
 export const usePrefPopulationFetch = () => {
   const [selectedPrefPopulation, setSelectedPrefPopulation] = useState<
     PopulationData[]

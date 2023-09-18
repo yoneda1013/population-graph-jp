@@ -1,6 +1,6 @@
 import { Prefecture } from './App';
 
-type PrefectureSelectorProps = {
+export type PrefectureSelectorProps = {
   data: {
     message: null | string,
     result: Prefecture[],
